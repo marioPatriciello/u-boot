@@ -1,0 +1,32 @@
+name: CodeQL U-Boot Lab
+
+on:
+  push:
+    branches:
+      - codeql-lab
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  analyze:
+    name: Analyze U-Boot with CodeQL
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout historical U-Boot
+        uses: actions/checkout@v4
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v4
+        with:
+          languages: c-cpp
+          build-mode: none
+          config: |
+            disable-default-queries: true
+            queries:
+              - uses: ./.github/codeql/queries/10_taint_tracking.ql
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v4
